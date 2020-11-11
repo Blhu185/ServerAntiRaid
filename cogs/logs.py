@@ -12,6 +12,7 @@ class Logs(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.blue = discord.Color.blue()
+        self.options_path = './data/options.json'
 
     async def is_alt(self, user: discord.User):
         """
@@ -55,7 +56,7 @@ class Logs(commands.Cog):
             elif 2 <= user_score <= 3:
                 alt_title = 'Caution!'
                 alt_description = 'This user is potentially an alt!'
-            elif 4 <= user_score <= 5:
+            else:
                 alt_title = 'Warning!'
                 alt_description = 'This user is most likely an alt!'
 
@@ -75,7 +76,7 @@ class Logs(commands.Cog):
     async def on_message_delete(self, message):
         """Calls when a message is deleted in the cache."""
         # checks for the private_log channel
-        with open('./data/options.json', 'r') as options_file:
+        with open(self.options_path, 'r') as options_file:
             options = json.load(options_file)
 
         if not message.guild:
@@ -119,7 +120,7 @@ class Logs(commands.Cog):
     async def on_message_edit(self, before, after):
         """Calls when a message is edited in the cache."""
         # checks for the private_log channel
-        with open('./data/options.json', 'r') as options_file:
+        with open(self.options_path, 'r') as options_file:
             options = json.load(options_file)
 
         if not after.guild:
@@ -171,7 +172,7 @@ class Logs(commands.Cog):
     async def on_member_join(self, member):
         """Automatically flag any suspicious members."""
         # checks for the private_log channel
-        with open('./data/options.json', 'r') as options_file:
+        with open(self.options_path, 'r') as options_file:
             options = json.load(options_file)
 
         if not member.guild:

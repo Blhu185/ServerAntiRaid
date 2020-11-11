@@ -20,10 +20,11 @@ class Options(commands.Cog):
         }  # text used for an embed
         self.tc_conv = commands.TextChannelConverter()
         self.role_conv = commands.RoleConverter()
+        self.options_path = './data/options.json'
 
     async def add_guild(self, guild):
         """If the guild options does not exist, add it to the dictionary."""
-        with open('./data/options.json', 'r') as options_file:
+        with open(self.options_path, 'r') as options_file:
             options = json.load(options_file)
 
         guild_key = str(guild.id)
@@ -37,14 +38,14 @@ class Options(commands.Cog):
                 'muted_role': None
             }  # append default values
 
-        with open('./data/options.json', 'w') as options_file:
+        with open(self.options_path, 'w') as options_file:
             json.dump(options, options_file, indent=2)
 
     async def change_option(self, ctx, option, *, new_option):
         """Change an option with the 'settings' command."""
         guild_key = str(ctx.guild.id)
 
-        with open('./data/options.json', 'r') as options_file:
+        with open(self.options_path, 'r') as options_file:
             options = json.load(options_file)
 
         # String
@@ -61,7 +62,7 @@ class Options(commands.Cog):
             role = await self.role_conv.convert(ctx, new_option)
             options[guild_key][option] = role.id
 
-        with open('./data/options.json', 'w') as options_file:
+        with open(self.options_path, 'w') as options_file:
             json.dump(options, options_file, indent=2)
 
         await ctx.send(f'**{option}** is now **{new_option}**')
@@ -99,19 +100,19 @@ class Options(commands.Cog):
         # Checking the channels and sending it
         if guild.public_updates_channel:
             await guild.public_updates_channel.send(embed=welcome_embed)
-        else:
-            for text_channel in guild.text_channels:
-                if text_channel.is_news():
-                    continue
-                if text_channel == guild.system_channel:
-                    continue
-                if text_channel == guild.rules_channel:
-                    continue
-                try:
-                    await text_channel.send(embed=welcome_embed)
-                    break
-                except discord.Forbidden:
-                    continue
+            return
+        for text_channel in guild.text_channels:
+            if text_channel.is_news():
+                continue
+            if text_channel == guild.system_channel:
+                continue
+            if text_channel == guild.rules_channel:
+                continue
+            try:
+                await text_channel.send(embed=welcome_embed)
+                break
+            except discord.Forbidden:
+                continue
 
     @commands.command(aliases=['options'])
     @commands.cooldown(1, 1, commands.BucketType.guild)
@@ -156,7 +157,7 @@ class Options(commands.Cog):
             guild_key = str(ctx.guild.id)
             await self.add_guild(ctx.guild)
 
-            with open('./data/options.json', 'r') as options_file:
+            with open(self.options_path, 'r') as options_file:
                 options = json.load(options_file)
 
             if not new_option:  # sends info about selected option

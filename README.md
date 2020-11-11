@@ -1,4 +1,4 @@
-# ServerAntiRaid
+# Server Anti-Raid
  
 **Server Anti-Raid, developed by ACPlayGames! Small moderation bot made for fun.**
 
@@ -8,7 +8,7 @@ This is a basic moderation bot that you can add on to to suit your own needs. Fe
 
 ![AntiRaid Icon created by me!](AntiRaid.png)
 
-A tutorial and explanation regarding how to use the bot is on my [YouTube](https://www.youtube.com/channel/UCDSHlAERINyHPbAkINm7OjQ)!
+A bot showcase with the commands can be found on my [YouTube](https://www.youtube.com/channel/UCDSHlAERINyHPbAkINm7OjQ)!
 
 Join the official [Discord](https://discord.com/invite/ka35JqY) server!
 
@@ -17,7 +17,7 @@ Join the official [Discord](https://discord.com/invite/ka35JqY) server!
 ## Installation
 To get started, a few things must be installed.
 
-1. Download [Python](https://www.python.org/downloads/). **Please make sure to check the "*Add Python to PATH*" option!**
+1. Download [Python](https://www.python.org/downloads/). **Please make sure to check the "*Add Python to PATH*" option!** (Note: There is currently an issue with installing the Discord module on Python 3.9.0, so install 3.8.6 for now.)
 
 2. We will be installing [discord.py](https://pypi.org/project/discord.py/) for this project. Open *Command Prompt* on your computer and type in `pip install discord`.
 

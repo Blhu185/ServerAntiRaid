@@ -53,21 +53,24 @@ async def on_ready():
 @bot.event
 async def on_command_error(ctx, error):
     """Handles any errors raised by the commands extension."""
-    if isinstance(error, commands.CommandNotFound):
-        pass
-    elif isinstance(error, commands.NoPrivateMessage):
-        await ctx.send('Commands will not work in DMs! Please use a guild!')
-    elif isinstance(error, commands.BotMissingPermissions):
-        await ctx.send('Sorry, I do not have administrator permission!')
-    elif isinstance(error, commands.MissingPermissions):
-        await ctx.send('You are not allowed to use this bot! Shoo!')
-    elif isinstance(error, commands.CommandOnCooldown):
-        seconds = round(error.retry_after, 1)
-        await ctx.send(f'Woah, slow down! Please wait `{seconds}` seconds!')
-    elif isinstance(error, commands.CommandInvokeError):
-        await ctx.send('Uh oh! Something went wrong!')
-    else:
-        await ctx.send(error)
+    if not isinstance(error, commands.CommandNotFound):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send(
+                f'Please input a valid **{error.param.name}** argument!'
+            )
+        elif isinstance(error, commands.NoPrivateMessage):
+            await ctx.send('Please use commands in a guild!')
+        elif isinstance(error, commands.BotMissingPermissions):
+            await ctx.send('Sorry, I do not have administrator permission!')
+        elif isinstance(error, commands.MissingPermissions):
+            await ctx.send('You are not allowed to use this bot! Shoo!')
+        elif isinstance(error, commands.CommandOnCooldown):
+            seconds = round(error.retry_after, 1)
+            await ctx.send(f'Woah, slow down! Please wait `{seconds}` secs!')
+        elif isinstance(error, commands.CommandInvokeError):
+            await ctx.send('Uh oh! Something went wrong!')
+        else:
+            await ctx.send(error)
 
 
 @bot.check
@@ -80,7 +83,11 @@ async def global_check(ctx):
     bot_perms = await commands.bot_has_guild_permissions(
         administrator=True).predicate(ctx)
 
-    # check for user permissions in guild
+    # anyone can use report command
+    if ctx.command.name == 'report':
+        return bot_perms and guild_only
+
+    # not report command, check for user permissions in guild
     author = ctx.author
     with open('./data/options.json', 'r') as options_file:
         options = json.load(options_file)
@@ -122,6 +129,9 @@ async def help_(ctx, command=None):
         # Commands
         help_title = command.upper()
         help_description = cmd_dict[command.lower()]
+    else:
+        await ctx.send('Please input a valid command or cog!')
+        return
 
     help_embed = discord.Embed(
         title=help_title,
@@ -147,7 +157,7 @@ async def help_(ctx, command=None):
         help_embed.add_field(
             name='Moderation',
             value='`warn` `warnings` `clearwarn` `mute` `unmute` `kick` ' +
-            '`ban` `bans` `unban`',
+            '`ban` `bans` `unban` `report`',
             inline=False
         )
         help_embed.add_field(

@@ -12,6 +12,7 @@ class Lockdown(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.blue = discord.Color.blue()
+        self.channels_path = './data/channels.json'
 
     async def lock_channel(self, channel):
         """Function used to lock a channel."""
@@ -19,7 +20,7 @@ class Lockdown(commands.Cog):
         guild_key = str(channel.guild.id)
         channel_key = str(channel.id)
 
-        with open('./data/channels.json', 'r') as channels_file:
+        with open(self.channels_path, 'r') as channels_file:
             ow_dict = json.load(channels_file)
 
         if guild_key not in ow_dict:
@@ -37,7 +38,7 @@ class Lockdown(commands.Cog):
             target_key = str(target.id)
             ow_dict[guild_key][channel_key][target_key] = dict(iter(overwrite))
 
-        with open('./data/channels.json', 'w') as channels_file:
+        with open(self.channels_path, 'w') as channels_file:
             json.dump(ow_dict, channels_file, indent=2)
 
         # Locks channel
@@ -56,7 +57,7 @@ class Lockdown(commands.Cog):
         guild_key = str(guild.id)
         channel_key = str(channel.id)
 
-        with open('./data/channels.json', 'r') as channels_file:
+        with open(self.channels_path, 'r') as channels_file:
             ow_dict = json.load(channels_file)
 
         new_ow = {}
@@ -74,7 +75,7 @@ class Lockdown(commands.Cog):
         if not ow_dict[guild_key]:  # guild_key dict is empty
             ow_dict.pop(guild_key)
 
-        with open('./data/channels.json', 'w') as channels_file:
+        with open(self.channels_path, 'w') as channels_file:
             json.dump(ow_dict, channels_file, indent=2)
 
         # Unlocks channel
@@ -91,7 +92,7 @@ class Lockdown(commands.Cog):
         guild_key = str(ctx.guild.id)
         channel_key = str(channel.id)
 
-        with open('./data/channels.json', 'r') as channels_file:
+        with open(self.channels_path, 'r') as channels_file:
             ow_dict = json.load(channels_file)
 
         if guild_key not in ow_dict:
@@ -113,7 +114,7 @@ class Lockdown(commands.Cog):
         guild_key = str(ctx.guild.id)
         channel_key = str(channel.id)
 
-        with open('./data/channels.json', 'r') as channels_file:
+        with open(self.channels_path, 'r') as channels_file:
             ow_dict = json.load(channels_file)
 
         if channel_key not in ow_dict[guild_key]:
@@ -127,7 +128,7 @@ class Lockdown(commands.Cog):
         """Prevents users from talking in all text channels."""
         guild_key = str(ctx.guild.id)
 
-        with open('./data/channels.json', 'r') as channels_file:
+        with open(self.channels_path, 'r') as channels_file:
             ow_dict = json.load(channels_file)
 
         if guild_key not in ow_dict:
@@ -155,7 +156,7 @@ class Lockdown(commands.Cog):
         """Lifts the lock for all text channels."""
         guild_key = str(ctx.guild.id)
 
-        with open('./data/channels.json', 'r') as channels_file:
+        with open(self.channels_path, 'r') as channels_file:
             ow_dict = json.load(channels_file)
 
         for channel in ctx.guild.text_channels:
