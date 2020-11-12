@@ -62,7 +62,7 @@ async def on_command_error(ctx, error):
             await ctx.send('Please use commands in a guild!')
         elif isinstance(error, commands.BotMissingPermissions):
             await ctx.send('Sorry, I do not have administrator permission!')
-        elif isinstance(error, commands.MissingPermissions):
+        elif isinstance(error, commands.CheckFailure):
             await ctx.send('You are not allowed to use this bot! Shoo!')
         elif isinstance(error, commands.CommandOnCooldown):
             seconds = round(error.retry_after, 1)
@@ -76,16 +76,16 @@ async def on_command_error(ctx, error):
 @bot.check
 async def global_check(ctx):
     """Bot checks for permissions and the location of the message."""
-    # check if command is in DMs
-    guild_only = await commands.guild_only().predicate(ctx)
+    # check if command is in DMs, raises error if not
+    await commands.guild_only().predicate(ctx)
 
-    # check for bot permissions in guild
-    bot_perms = await commands.bot_has_guild_permissions(
+    # check for bot permissions in guild, raises error if not
+    await commands.bot_has_guild_permissions(
         administrator=True).predicate(ctx)
 
     # anyone can use report command
     if ctx.command.name == 'report':
-        return bot_perms and guild_only
+        return True
 
     # not report command, check for user permissions in guild
     author = ctx.author
@@ -100,9 +100,7 @@ async def global_check(ctx):
         mod_role = ctx.guild.get_role(mod_role)
 
     admin_perms = author.guild_permissions.administrator
-    mod_only = mod_role in author.roles or admin_perms
-
-    return bot_perms and guild_only and mod_only
+    return mod_role in author.roles or admin_perms
 
 bot.load_extension('cogs.lockdown')
 bot.load_extension('cogs.logs')
