@@ -13,10 +13,11 @@ class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.blue = discord.Color.blue()
-        self.user_conv = commands.UserConverter()
         self.options_path = './data/options.json'
         self.warns_path = './data/warns.json'
         self.mutes_path = './data/mutes.json'
+        self.valid_user = 'Please provide a valid user!'
+        self.user_conv = commands.UserConverter()
 
     async def create_muted_role(self, guild):
         """Create a role that denies permission to send messages."""
@@ -426,7 +427,7 @@ class Moderation(commands.Cog):
         try:
             member = await self.user_conv.convert(ctx, user)
         except commands.UserNotFound:
-            await ctx.send('Please provide a valid user!')
+            await ctx.send(self.valid_user)
             return
 
         await ctx.guild.ban(member, reason=reason)
@@ -512,11 +513,21 @@ class Moderation(commands.Cog):
         """
         await ctx.message.delete()
 
-        try:
-            member = await self.user_conv.convert(ctx, user)
-        except commands.UserNotFound:
-            await ctx.send('Please provide a valid user!')
-            return
+        if user.isdigit():  # potential user ID
+            try:
+                member = await self.bot.fetch_user(int(user))
+            except discord.NotFound:
+                await ctx.send(self.valid_user)
+                return
+        else:  # potential username + discriminator
+            bans = await ctx.guild.bans()
+            for ban in bans:
+                if str(ban.user) == user:
+                    member = ban.user
+                    break
+            else:
+                await ctx.send(self.valid_user)
+                return
 
         await ctx.guild.unban(member, reason=reason)
         await ctx.send(f'**{member}** has been unbanned!')

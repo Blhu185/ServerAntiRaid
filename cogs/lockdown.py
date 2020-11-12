@@ -183,7 +183,10 @@ class Lockdown(commands.Cog):
             if messages == 1:
                 await ctx.send('Successfully purged 1 message!')
             else:
-                await ctx.send(f'Successfully purged {messages} messages!')
+                await ctx.send(
+                    content=f'Successfully purged {messages} messages!',
+                    delete_after=3.0
+                )
         else:
             await ctx.send('Invalid number of messages to purge!')
 

@@ -8,7 +8,7 @@ This is a basic moderation bot that you can add on to to suit your own needs. Fe
 
 ![AntiRaid Icon created by me!](AntiRaid.png)
 
-A bot showcase with the commands can be found on my [YouTube](https://www.youtube.com/channel/UCDSHlAERINyHPbAkINm7OjQ)!
+A bot showcase with the commands can be found on my [YouTube](https://youtu.be/HrE9ss9Sl3U)!
 
 Join the official [Discord](https://discord.com/invite/ka35JqY) server!
 
@@ -21,7 +21,7 @@ To get started, a few things must be installed.
 
 2. We will be installing [discord.py](https://pypi.org/project/discord.py/) for this project. Open *Command Prompt* on your computer and type in `pip install discord`.
 
-3. Clone the GitHub repository (either using the web URL, GitHub Desktop, or downloading the zipped file).
+3. Clone the GitHub repository (either using the web URL, GitHub Desktop, or downloading and extracting the zipped file).
 
 ## Creating and Inviting the Bot
 
@@ -46,3 +46,5 @@ With those steps done, you are almost ready to go! However, please note that in 
 Please replace the `TOKEN HERE` text with your bot token from earlier, as shown below.
 
 > bot.run('ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890')
+
+Now just run the Python file, and your bot should be up and running!

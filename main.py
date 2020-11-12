@@ -43,7 +43,7 @@ async def on_ready():
     )
     print(
         '\nBot Ready!\n',
-        f'\nClient User: {bot.user.name}#{bot.user.discriminator}',
+        f'\nClient User: {str(bot.user)}',
         f'\nUser ID: {bot.user.id}',
         f'\nDiscord Library Version: {discord.__version__} ' +
         f'{discord.version_info.releaselevel}\n'
@@ -99,8 +99,7 @@ async def global_check(ctx):
         mod_role = options[guild_key]['mod_role']
         mod_role = ctx.guild.get_role(mod_role)
 
-    admin_perms = await commands.has_guild_permissions(
-        administrator=True).predicate(ctx)
+    admin_perms = author.guild_permissions.administrator
     mod_only = mod_role in author.roles or admin_perms
 
     return bot_perms and guild_only and mod_only
