@@ -11,7 +11,6 @@ class Logs(commands.Cog):
     """Detects deleted and edited messages."""
     def __init__(self, bot):
         self.bot = bot
-        self.blue = discord.Color.blue()
         self.options_path = './data/options.json'
 
     async def is_alt(self, user: discord.User):
@@ -63,7 +62,7 @@ class Logs(commands.Cog):
             alt_embed = discord.Embed(
                 title=alt_title,
                 description=alt_description,
-                color=self.blue
+                color=discord.Color.blue()
             )
             alt_embed.set_author(
                 name=user,
@@ -97,7 +96,7 @@ class Logs(commands.Cog):
         # creating & sending the embed message
         delete_embed = discord.Embed(
             title='Message Deleted',
-            color=self.blue
+            color=discord.Color.blue()
         )
         delete_embed.set_author(
             name=message.author,
@@ -144,7 +143,7 @@ class Logs(commands.Cog):
         # creating & sending the embed message
         edit_embed = discord.Embed(
             title='Message Edited',
-            color=self.blue
+            color=discord.Color.blue()
         )
         edit_embed.set_author(
             name=after.author,
@@ -196,7 +195,7 @@ class Logs(commands.Cog):
             # creating & sending the embed message
             check_embed = discord.Embed(
                 title='Potential Alt!',
-                color=self.blue
+                color=discord.Color.blue()
             )
             check_embed.set_author(
                 name=member,

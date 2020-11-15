@@ -11,7 +11,6 @@ class Lockdown(commands.Cog):
     """Moderator commands to combat a raid."""
     def __init__(self, bot):
         self.bot = bot
-        self.blue = discord.Color.blue()
         self.channels_path = './data/channels.json'
 
     async def lock_channel(self, channel):
@@ -181,7 +180,10 @@ class Lockdown(commands.Cog):
             await ctx.channel.purge(limit=messages)
 
             if messages == 1:
-                await ctx.send('Successfully purged 1 message!')
+                await ctx.send(
+                    content='Successfully purged 1 message!',
+                    delete_after=3.0
+                )
             else:
                 await ctx.send(
                     content=f'Successfully purged {messages} messages!',

@@ -12,7 +12,6 @@ class Moderation(commands.Cog):
     """Typical moderation commands."""
     def __init__(self, bot):
         self.bot = bot
-        self.blue = discord.Color.blue()
         self.options_path = './data/options.json'
         self.warns_path = './data/warns.json'
         self.mutes_path = './data/mutes.json'
@@ -77,7 +76,7 @@ class Moderation(commands.Cog):
         warn_embed = discord.Embed(
             title='Warning',
             description='Warns a user for their misconducts!',
-            color=self.blue
+            color=discord.Color.blue()
         )
         warn_embed.set_author(
             name=member,
@@ -130,7 +129,7 @@ class Moderation(commands.Cog):
         warnings_embed = discord.Embed(
             title='Warnings',
             description=warns_msg,
-            color=self.blue
+            color=discord.Color.blue()
         )
         warnings_embed.set_author(
             name=member,
@@ -253,7 +252,7 @@ class Moderation(commands.Cog):
         mute_embed = discord.Embed(
             title='Mute',
             description='Mutes a user for their misconducts!',
-            color=self.blue
+            color=discord.Color.blue()
         )
         mute_embed.set_author(
             name=member,
@@ -332,7 +331,7 @@ class Moderation(commands.Cog):
         unmute_embed = discord.Embed(
             title='Unmute',
             description='Unmutes a user for serving their sentence!',
-            color=self.blue
+            color=discord.Color.blue()
         )
         unmute_embed.set_author(
             name=member,
@@ -390,7 +389,7 @@ class Moderation(commands.Cog):
         kick_embed = discord.Embed(
             title='Kick',
             description='Goodbye!',
-            color=self.blue
+            color=discord.Color.blue()
         )
         kick_embed.set_author(
             name=member,
@@ -453,7 +452,7 @@ class Moderation(commands.Cog):
         ban_embed = discord.Embed(
             title='Ban',
             description='Goodbye forever, loser!',
-            color=self.blue
+            color=discord.Color.blue()
         )
         ban_embed.set_author(
             name=member,
@@ -492,7 +491,7 @@ class Moderation(commands.Cog):
         bans_embed = discord.Embed(
             title='Bans',
             description=bans_msg,
-            color=self.blue
+            color=discord.Color.blue()
         )
         for ban in bans:
             bans_embed.add_field(
@@ -552,7 +551,7 @@ class Moderation(commands.Cog):
         unban_embed = discord.Embed(
             title='Unban',
             description='Welcome back! Perhaps I treated you too harshly.',
-            color=self.blue
+            color=discord.Color.blue()
         )
         unban_embed.set_author(
             name=member,
@@ -607,7 +606,7 @@ class Moderation(commands.Cog):
         report_embed = discord.Embed(
             title='Report!',
             description='Report a user for their misconducts!',
-            color=self.blue
+            color=discord.Color.blue()
         )
         report_embed.set_author(
             name=str(ctx.author),

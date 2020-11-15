@@ -10,7 +10,6 @@ class Options(commands.Cog):
     """Customizable options for the bot."""
     def __init__(self, bot):
         self.bot = bot
-        self.blue = discord.Color.blue()
         self.accepted_values = {
             'prefix': 'Anything',
             'public_log': 'Any text channel',
@@ -76,7 +75,7 @@ class Options(commands.Cog):
         welcome_embed = discord.Embed(
             title='Thank you for inviting this bot!',
             description='Do `.settings` to get started!',
-            color=self.blue
+            color=discord.Color.blue()
         )
         if guild.mfa_level == 0:
             welcome_embed.add_field(
@@ -122,7 +121,7 @@ class Options(commands.Cog):
             settings_embed = discord.Embed(
                 title='Customizable Settings',
                 description='Run `.settings <option> <new_option>`!',
-                color=self.blue
+                color=discord.Color.blue()
             )
             settings_embed.add_field(
                 name='prefix',
@@ -173,7 +172,7 @@ class Options(commands.Cog):
                 option_embed = discord.Embed(
                     title=option,
                     description='Run `.settings <option> <new_option>`!',
-                    color=self.blue
+                    color=discord.Color.blue()
                 )
                 option_embed.add_field(
                     name='Current Value',
