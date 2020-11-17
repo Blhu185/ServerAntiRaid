@@ -5,18 +5,17 @@ import json
 import discord
 from discord.ext import commands
 
-default_reason = 'No reason was provided.'
+DEFAULT_REASON = 'No reason was provided.'
+OPTIONS_PATH = './data/options.json'
+WARNS_PATH = './data/warns.json'
+MUTES_PATH = './data/mutes.json'
+VALID_USER = 'Please provide a valid user!'
 
 
 class Moderation(commands.Cog):
     """Typical moderation commands."""
     def __init__(self, bot):
         self.bot = bot
-        self.options_path = './data/options.json'
-        self.warns_path = './data/warns.json'
-        self.mutes_path = './data/mutes.json'
-        self.valid_user = 'Please provide a valid user!'
-        self.user_conv = commands.UserConverter()
 
     async def create_muted_role(self, guild):
         """Create a role that denies permission to send messages."""
@@ -32,7 +31,7 @@ class Moderation(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 1, commands.BucketType.member)
     async def warn(self, ctx, member: discord.Member, *,
-                   reason=default_reason):
+                   reason=DEFAULT_REASON):
         """
         Issues a warn to a user.
 
@@ -41,7 +40,7 @@ class Moderation(commands.Cog):
         await ctx.message.delete()
 
         # add warn to user
-        with open(self.warns_path, 'r') as warns_file:
+        with open(WARNS_PATH, 'r') as warns_file:
             warns = json.load(warns_file)
 
         guild_key = str(ctx.guild.id)
@@ -53,13 +52,13 @@ class Moderation(commands.Cog):
             warns[guild_key][member_key] = []
         warns[guild_key][member_key].append(reason)
 
-        with open(self.warns_path, 'w') as warns_file:
+        with open(WARNS_PATH, 'w') as warns_file:
             json.dump(warns, warns_file, indent=2)
 
         await ctx.send(f'**{member}** has been warned!')
 
         # check for the public_log channel
-        with open(self.options_path, 'r') as options_file:
+        with open(OPTIONS_PATH, 'r') as options_file:
             options = json.load(options_file)
 
         if guild_key not in options:
@@ -109,7 +108,7 @@ class Moderation(commands.Cog):
         **Example:** `.warnings @ACPlayGames`
         """
         # gets the warns of the user & parses them
-        with open(self.warns_path, 'r') as warns_file:
+        with open(WARNS_PATH, 'r') as warns_file:
             warns = json.load(warns_file)
 
         guild_key = str(ctx.guild.id)
@@ -154,7 +153,7 @@ class Moderation(commands.Cog):
         """
         await ctx.message.delete()
 
-        with open(self.warns_path, 'r') as warns_file:
+        with open(WARNS_PATH, 'r') as warns_file:
             warns = json.load(warns_file)
 
         guild_key = str(ctx.guild.id)
@@ -167,7 +166,7 @@ class Moderation(commands.Cog):
                 member_warns.pop(warn_id - 1)
                 await ctx.send(f'Warn #{warn_id} has been cleared!')
 
-                with open(self.warns_path, 'w') as warns_file:
+                with open(WARNS_PATH, 'w') as warns_file:
                     json.dump(warns, warns_file, indent=2)
             else:
                 await ctx.send('Invalid ID!')
@@ -177,7 +176,7 @@ class Moderation(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 1, commands.BucketType.member)
     async def mute(self, ctx, member: discord.Member, *,
-                   reason=default_reason):
+                   reason=DEFAULT_REASON):
         """
         Mutes a user.
 
@@ -186,7 +185,7 @@ class Moderation(commands.Cog):
         await ctx.message.delete()
 
         # check for a Muted role, creates one if not found
-        with open(self.options_path, 'r') as options_file:
+        with open(OPTIONS_PATH, 'r') as options_file:
             options = json.load(options_file)
 
         guild_key = str(ctx.guild.id)
@@ -208,11 +207,11 @@ class Moderation(commands.Cog):
 
         options[guild_key]['muted_role'] = muted_role.id
 
-        with open(self.options_path, 'w') as options_file:
+        with open(OPTIONS_PATH, 'w') as options_file:
             json.dump(options, options_file, indent=2)
 
         # remembers & removes current roles, gives Muted role
-        with open(self.mutes_path, 'r') as mutes_file:
+        with open(MUTES_PATH, 'r') as mutes_file:
             mutes = json.load(mutes_file)
 
         roles = member.roles
@@ -231,11 +230,11 @@ class Moderation(commands.Cog):
 
         mutes[guild_key][member_key] = [role.id for role in roles]
 
-        with open(self.mutes_path, 'w') as mutes_file:
+        with open(MUTES_PATH, 'w') as mutes_file:
             json.dump(mutes, mutes_file, indent=2)
 
         # check for the public_log channel
-        with open(self.options_path, 'r') as options_file:
+        with open(OPTIONS_PATH, 'r') as options_file:
             options = json.load(options_file)
 
         if guild_key not in options:
@@ -279,7 +278,7 @@ class Moderation(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 1, commands.BucketType.member)
     async def unmute(self, ctx, member: discord.Member, *,
-                     reason=default_reason):
+                     reason=DEFAULT_REASON):
         """
         Unmutes a user.
 
@@ -291,7 +290,7 @@ class Moderation(commands.Cog):
         member_key = str(member.id)
 
         # removes Muted role, returns original roles
-        with open(self.mutes_path, 'r') as mutes_file:
+        with open(MUTES_PATH, 'r') as mutes_file:
             mutes = json.load(mutes_file)
 
         if guild_key not in mutes:
@@ -306,7 +305,7 @@ class Moderation(commands.Cog):
 
         mutes[guild_key].pop(member_key)
 
-        with open(self.mutes_path, 'w') as mutes_file:
+        with open(MUTES_PATH, 'w') as mutes_file:
             json.dump(mutes, mutes_file, indent=2)
 
         await member.edit(roles=roles, reason='Unmuted')
@@ -314,7 +313,7 @@ class Moderation(commands.Cog):
         await ctx.send(f'**{member}** has been unmuted!')
 
         # check for the public_log channel
-        with open(self.options_path, 'r') as options_file:
+        with open(OPTIONS_PATH, 'r') as options_file:
             options = json.load(options_file)
 
         if guild_key not in options:
@@ -358,7 +357,7 @@ class Moderation(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 1, commands.BucketType.member)
     async def kick(self, ctx, member: discord.Member, *,
-                   reason=default_reason):
+                   reason=DEFAULT_REASON):
         """
         Removes a user from the current guild.
 
@@ -372,7 +371,7 @@ class Moderation(commands.Cog):
         guild_key = str(ctx.guild.id)
 
         # check for the public_log channel
-        with open(self.options_path, 'r') as options_file:
+        with open(OPTIONS_PATH, 'r') as options_file:
             options = json.load(options_file)
 
         if guild_key not in options:
@@ -415,7 +414,7 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.cooldown(1, 1, commands.BucketType.member)
-    async def ban(self, ctx, user, *, reason=default_reason):
+    async def ban(self, ctx, user, *, reason=DEFAULT_REASON):
         """
         Strikes a user with a ban hammer.
 
@@ -424,9 +423,10 @@ class Moderation(commands.Cog):
         await ctx.message.delete()
 
         try:
-            member = await self.user_conv.convert(ctx, user)
+            user_conv = commands.UserConverter()
+            member = await user_conv.convert(ctx, user)
         except commands.UserNotFound:
-            await ctx.send(self.valid_user)
+            await ctx.send(VALID_USER)
             return
 
         await ctx.guild.ban(member, reason=reason)
@@ -435,7 +435,7 @@ class Moderation(commands.Cog):
         guild_key = str(ctx.guild.id)
 
         # check for the public_log channel
-        with open(self.options_path, 'r') as options_file:
+        with open(OPTIONS_PATH, 'r') as options_file:
             options = json.load(options_file)
 
         if guild_key not in options:
@@ -504,7 +504,7 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.cooldown(1, 1, commands.BucketType.member)
-    async def unban(self, ctx, user, *, reason=default_reason):
+    async def unban(self, ctx, user, *, reason=DEFAULT_REASON):
         """
         Reverses the effects of the ban hammer.
 
@@ -516,7 +516,7 @@ class Moderation(commands.Cog):
             try:
                 member = await self.bot.fetch_user(int(user))
             except discord.NotFound:
-                await ctx.send(self.valid_user)
+                await ctx.send(VALID_USER)
                 return
         else:  # potential username + discriminator
             bans = await ctx.guild.bans()
@@ -525,7 +525,7 @@ class Moderation(commands.Cog):
                     member = ban.user
                     break
             else:
-                await ctx.send(self.valid_user)
+                await ctx.send(VALID_USER)
                 return
 
         await ctx.guild.unban(member, reason=reason)
@@ -534,7 +534,7 @@ class Moderation(commands.Cog):
         guild_key = str(ctx.guild.id)
 
         # check for the public_log channel
-        with open(self.options_path, 'r') as options_file:
+        with open(OPTIONS_PATH, 'r') as options_file:
             options = json.load(options_file)
 
         if guild_key not in options:
@@ -578,7 +578,7 @@ class Moderation(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 3, commands.BucketType.member)
     async def report(
-        self, ctx, member: discord.Member, *, reason=default_reason
+        self, ctx, member: discord.Member, *, reason=DEFAULT_REASON
     ):
         """
         Reports a user for violating a rule (Anyone can use this!)
@@ -586,7 +586,7 @@ class Moderation(commands.Cog):
         **Example:** `.report @ACPlayGames bad`
         """
         # checks for the public_log channel
-        with open(self.options_path, 'r') as options_file:
+        with open(OPTIONS_PATH, 'r') as options_file:
             options = json.load(options_file)
 
         guild_key = str(ctx.guild.id)

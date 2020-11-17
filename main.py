@@ -28,8 +28,6 @@ bot = commands.Bot(
 )
 bot.remove_command('help')
 
-blue = discord.Color.blue()
-
 
 @bot.event
 async def on_ready():
@@ -133,7 +131,7 @@ async def help_(ctx, command=None):
     help_embed = discord.Embed(
         title=help_title,
         description=help_description,
-        color=blue
+        color=discord.Color.blue()
     )
     help_embed.set_footer(
         text='Do `.help <cog or command>` for more information!'

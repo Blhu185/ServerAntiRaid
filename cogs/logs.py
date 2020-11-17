@@ -6,12 +6,13 @@ import json
 import discord
 from discord.ext import commands
 
+OPTIONS_PATH = './data/options.json'
+
 
 class Logs(commands.Cog):
     """Detects deleted and edited messages."""
     def __init__(self, bot):
         self.bot = bot
-        self.options_path = './data/options.json'
 
     async def is_alt(self, user: discord.User):
         """
@@ -75,7 +76,7 @@ class Logs(commands.Cog):
     async def on_message_delete(self, message):
         """Calls when a message is deleted in the cache."""
         # checks for the private_log channel
-        with open(self.options_path, 'r') as options_file:
+        with open(OPTIONS_PATH, 'r') as options_file:
             options = json.load(options_file)
 
         if not message.guild:
@@ -119,7 +120,7 @@ class Logs(commands.Cog):
     async def on_message_edit(self, before, after):
         """Calls when a message is edited in the cache."""
         # checks for the private_log channel
-        with open(self.options_path, 'r') as options_file:
+        with open(OPTIONS_PATH, 'r') as options_file:
             options = json.load(options_file)
 
         if not after.guild:
@@ -171,7 +172,7 @@ class Logs(commands.Cog):
     async def on_member_join(self, member):
         """Automatically flag any suspicious members."""
         # checks for the private_log channel
-        with open(self.options_path, 'r') as options_file:
+        with open(OPTIONS_PATH, 'r') as options_file:
             options = json.load(options_file)
 
         if not member.guild:

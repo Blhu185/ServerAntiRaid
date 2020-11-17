@@ -5,25 +5,24 @@ import json
 import discord
 from discord.ext import commands
 
+OPTIONS_PATH = './data/options.json'
+ACCEPTED_VALUES = {
+    'prefix': 'Anything',
+    'public_log': 'Any text channel',
+    'private_log': 'Any text channel',
+    'mod_role': 'Any role',
+    'muted_role': 'Any role'
+}  # text used for an embed
+
 
 class Options(commands.Cog):
     """Customizable options for the bot."""
     def __init__(self, bot):
         self.bot = bot
-        self.accepted_values = {
-            'prefix': 'Anything',
-            'public_log': 'Any text channel',
-            'private_log': 'Any text channel',
-            'mod_role': 'Any role',
-            'muted_role': 'Any role'
-        }  # text used for an embed
-        self.tc_conv = commands.TextChannelConverter()
-        self.role_conv = commands.RoleConverter()
-        self.options_path = './data/options.json'
 
     async def add_guild(self, guild):
         """If the guild options does not exist, add it to the dictionary."""
-        with open(self.options_path, 'r') as options_file:
+        with open(OPTIONS_PATH, 'r') as options_file:
             options = json.load(options_file)
 
         guild_key = str(guild.id)
@@ -37,14 +36,14 @@ class Options(commands.Cog):
                 'muted_role': None
             }  # append default values
 
-        with open(self.options_path, 'w') as options_file:
+        with open(OPTIONS_PATH, 'w') as options_file:
             json.dump(options, options_file, indent=2)
 
     async def change_option(self, ctx, option, *, new_option):
         """Change an option with the 'settings' command."""
         guild_key = str(ctx.guild.id)
 
-        with open(self.options_path, 'r') as options_file:
+        with open(OPTIONS_PATH, 'r') as options_file:
             options = json.load(options_file)
 
         # String
@@ -53,15 +52,17 @@ class Options(commands.Cog):
 
         # discord.TextChannel
         elif option in ('public_log', 'private_log'):
-            text_channel = await self.tc_conv.convert(ctx, new_option)
+            tc_conv = commands.TextChannelConverter()
+            text_channel = await tc_conv.convert(ctx, new_option)
             options[guild_key][option] = text_channel.id
 
         # discord.Role
         elif option in ('mod_role', 'muted_role'):
-            role = await self.role_conv.convert(ctx, new_option)
+            role_conv = commands.RoleConverter()
+            role = await role_conv.convert(ctx, new_option)
             options[guild_key][option] = role.id
 
-        with open(self.options_path, 'w') as options_file:
+        with open(OPTIONS_PATH, 'w') as options_file:
             json.dump(options, options_file, indent=2)
 
         await ctx.send(f'**{option}** is now **{new_option}**')
@@ -156,7 +157,7 @@ class Options(commands.Cog):
             guild_key = str(ctx.guild.id)
             await self.add_guild(ctx.guild)
 
-            with open(self.options_path, 'r') as options_file:
+            with open(OPTIONS_PATH, 'r') as options_file:
                 options = json.load(options_file)
 
             if not new_option:  # sends info about selected option
@@ -181,7 +182,7 @@ class Options(commands.Cog):
                 )
                 option_embed.add_field(
                     name='Accepted Types of Value',
-                    value=self.accepted_values[option],
+                    value=ACCEPTED_VALUES[option],
                     inline=False
                 )
                 await ctx.send(embed=option_embed)
